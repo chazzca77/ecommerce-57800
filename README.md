@@ -16,5 +16,5 @@ Teconologias usadas:
 Usar los siguientes comandos para instalación desde el directorio raiz del proyecto. 
 ```
 $ npm install
-$ npm start
+$ npm run dev
 ```
