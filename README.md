@@ -1,3 +1,5 @@
+![](preentrega2.gif)
+
 ## Table of Contents
 1. [Información General](#general-info)
 2. [Tecnologias](#technologies)
@@ -5,6 +7,7 @@
 
 ## Información General
 Este proyecto es el inicio de un ecommerce creado con React-Vite, desde el curso de React
+
 
 ### Tecnologias
 Teconologias usadas:
