@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+:root{
+  --blue-Ecommerce: #1190CB;
+  --red-Ecommerce: #D0011C;
+}
+
+
 *{
   margin: 0;
   padding: 0;
