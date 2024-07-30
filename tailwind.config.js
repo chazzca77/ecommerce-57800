@@ -5,11 +5,13 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
-    extend: {},
-    colors: {
-      'blueEcommerce': '#1190CB',
-      'redEcommerce': '#D0011C',
+    extend: {
+      colors: {
+        'blueEcommerce': '#1190CB',
+        'redEcommerce': '#D0011C',
+      },
     },
+
   },
   plugins: [],
 }
