@@ -3,8 +3,8 @@ import { ThreeDots } from 'react-loading-icons'
 import { useParams } from 'react-router-dom'
 import { getDocs, collection, query, where } from 'firebase/firestore'
 import db from 'src/db/db.js'
-import ItemList from './ItemList'
 import useLoading from 'src/hooks/useLoading'
+import ItemList from './ItemList'
 
 const ItemListContainer = ({ saludo } ) => {
   const [ productos, setPoductos] = useState([])

@@ -1,13 +1,13 @@
 import { createContext, useState } from "react";
-
+import useLocalStorage from 'src/hooks/useLocalStorage'
 //Creamos un contexto llamado CartContext 
 const CartContext = createContext()
 
 const CartProvider = ({children}) => {
-
   //Creamos un componente que servira como preveedor de contexto
   //Este mismo envuelve los componentes que van a poder consumir  la info de context
-  const [ carrito, setCarrito ] = useState([])
+  const [carritoLs, setCarritoLs] = useLocalStorage("carrito", []);
+  const [ carrito, setCarrito ] = useState(carritoLs)
 
   const agregarProducto = (productoNuevo) => {
     //logica para sumar cantidades o agregar producto nuevo
@@ -20,9 +20,11 @@ const CartProvider = ({children}) => {
         }
       })
       setCarrito(nuevoCarrito)
+      setCarritoLs(nuevoCarrito)
     }else{
       //Agregar el producto como nuevo
       setCarrito([ ...carrito, productoNuevo])
+      setCarritoLs([ ...carrito, productoNuevo])
     }
   }
 
@@ -50,10 +52,12 @@ const CartProvider = ({children}) => {
   const borrarProducto = (idProducto) => {
     const productosFiltrados = carrito.filter( productoCarrito => productoCarrito.id !== idProducto)
     setCarrito(productosFiltrados)
+    setCarritoLs(productosFiltrados)
   }
 
   const vaciarCarrito = () => {
     setCarrito([])
+    setCarritoLs([])
   }
 
   return (
