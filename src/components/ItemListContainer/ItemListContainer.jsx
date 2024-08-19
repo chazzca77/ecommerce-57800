@@ -1,37 +1,52 @@
 import { useState, useEffect } from 'react'
-import obtenerProductos from 'src/data/data.js'
-import ItemList from './ItemList'
-import useLoading from 'src/hooks/useLoading.jsx'
-import { useParams } from 'react-router-dom'
 import { ThreeDots } from 'react-loading-icons'
+import { useParams } from 'react-router-dom'
+import { getDocs, collection, query, where } from 'firebase/firestore'
+import db from 'src/db/db.js'
+import ItemList from './ItemList'
+import useLoading from 'src/hooks/useLoading'
 
 const ItemListContainer = ({ saludo } ) => {
-
   const [ productos, setPoductos] = useState([])
   const { cargando, mostrarCargando, ocultarCargando} = useLoading()
   const { categoryId } = useParams()
 
-  useEffect( ()=>{
-    mostrarCargando()
+  const getProducts = async () =>{
+    try {
+      mostrarCargando()
+      const productosRef = collection(db, "productos")
+      const dataDb = await getDocs(productosRef)
+      const data = dataDb.docs.map( (productDb) => {
+        return { id: productDb.id, ...productDb.data()}
+      })
+      setPoductos(data)
+    } catch (error) {
+      console.log("error")
+    }
+  }
 
-    obtenerProductos(1500)
-      .then( respuesta => {
-        if(categoryId){ 
-          //filtrar productos por categoria
-          const productosFiltrados = respuesta.filter( element => element.categoria== categoryId)
-          setPoductos(productosFiltrados)
-          return
-        }
-        //guardar todos los productos son filtro
-        setPoductos(respuesta)        
+  const getProductsByCategory = async() => {
+    try {
+      const productosRef = collection(db, "productos")
+      const q = query(productosRef, where("categoria","==", categoryId))
+      const dataDb = await getDocs(q)
+  
+      const data = dataDb.docs.map( (productDb) => {
+        return { id: productDb.id, ...productDb.data()}
       })
-      .catch( error => {
-        console.log(error)
-      })
-      .finally( () => {
-        // console.log("Finalizo la promesa")
-        ocultarCargando()
-      })
+      setPoductos(data)      
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  useEffect( ()=>{
+    if(categoryId){ 
+      getProductsByCategory()
+    }else{
+      getProducts()
+    }
+    ocultarCargando()
   } , [categoryId])
 
   const pantallaDeCarga = <p className="text-gray-700 text-base flex justify-center">

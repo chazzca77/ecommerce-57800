@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react"
-import obtenerProducto from "src/data/data"
-import ItemDetail from "./ItemDetail"
 import { useParams } from "react-router-dom"
 import { ThreeDots } from 'react-loading-icons'
+import { getDoc, doc } from "firebase/firestore"
+import db from "src/db/db.js"
 import useLoading from 'src/hooks/useLoading.jsx'
+import ItemDetail from "./ItemDetail"
+import ItemNotFound from "../NotFound/ItemNotFound"
+
 
 const ItemDetailContainer = () => {
 
@@ -11,28 +14,35 @@ const ItemDetailContainer = () => {
   const { cargando, mostrarCargando, ocultarCargando} = useLoading()
   const { id } = useParams()
 
-  useEffect( () => {
-    mostrarCargando()
-    obtenerProducto(1000)
-    .then( data => {
-      const productoEncontrado = data.find(productData => productData.id === id )
-      setProducto(productoEncontrado)
-    })
-    .finally( () => {
-      ocultarCargando()
-    })
-  }, [id])
+  const getProduct = async () =>{
+    try {
+      mostrarCargando()
+      const docRef = doc(db, "productos", id)
+      const dataDb = await getDoc(docRef)
+      const data = { id: dataDb.id, ...dataDb.data()}
+      setProducto(data)      
+    } catch (error) {
+      console.log("error",error)
+    }finally { 
+      ocultarCargando()   
+    }
+  }
 
-  const pantallaDeCarga = <p className="text-gray-700 text-base flex justify-center items-center p-6">
+  useEffect( () => {
+    getProduct()
+  }, [id])
+  
+  const pantallaDeCarga = <div className="h-[calc(100vh-74px)] text-gray-700 text-base flex justify-center items-center p-6">
     <ThreeDots stroke="var(--blue-Ecommerce)"  />
-    </p>
+    </div>
 
   return (
-    <div className="">
+    <>
       {
-        cargando ? pantallaDeCarga : <ItemDetail producto={producto} />
+        cargando ? pantallaDeCarga : 
+        producto.hasOwnProperty('nombre') ? <ItemDetail producto={producto}/> : <ItemNotFound/>
       }
-  </div>
+    </>
   )
 }
 
