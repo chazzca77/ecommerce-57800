@@ -32,3 +32,5 @@ $ npm run dev
 Librerias utilizadas: 
 #### `firebase` `react-icons` `react-toastify` `react-loading-icons` `yup`
 
+## Desplegado en Vercel
+* [Ecommerce-57800](https://ecommerce-57800.vercel.app/) `https://ecommerce-57800.vercel.app/`
