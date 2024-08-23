@@ -8,7 +8,9 @@ export default {
     extend: {
       colors: {
         'blueEcommerce': '#1190CB',
+        'blueLightEcommerce': '#60cdff',
         'redEcommerce': '#D0011C',
+        'blueStrongEcommerce': '#1f82b1'
       },
     },
 

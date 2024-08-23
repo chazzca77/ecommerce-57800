@@ -1,8 +1,12 @@
-import { FaCartPlus } from "react-icons/fa6";
-import { FaHeart } from "react-icons/fa";
-
+import { toast } from "react-toastify"
+import ItemCount from "../ItemCount/ItemCount";
+import { useContext, useState } from "react";
+import { CartContext } from "src/context/CartContext";
+import { Link } from "react-router-dom";
 
 const ItemDetail = ({producto}) => {
+  const { agregarProducto, estaEnElCarrito, getProductoCarrito } = useContext(CartContext)
+  const [mostrarItemCount, setMostrarItemCount] = useState(true)
 
   let USDollar = new Intl.NumberFormat('en-US', {
       style: 'currency',
@@ -10,6 +14,32 @@ const ItemDetail = ({producto}) => {
   });
   const precio = USDollar.format(producto.precio)
 
+  const agregarAlCarrito = (count) => {
+    const estaEnCarrito = estaEnElCarrito(producto.id)
+    if(!estaEnCarrito){
+      agregarProducto({...producto, cantidad: count})
+      toast.success('Producto agregado correctamente')
+      return;
+    }
+    const productoCarrito = getProductoCarrito(producto.id)
+    const cantidadTotal = productoCarrito.cantidad + count
+    if(cantidadTotal > producto.stock){
+      toast.warning('No puedes agregar más que el stock disponible')
+      return;
+    }
+    agregarProducto({...producto, cantidad: count})
+    toast.success('Producto agregado correctamente')
+    //ocultamos el componente ItemCount
+    setMostrarItemCount(false)
+  }
+
+  const IrAlCarritoComponent = () => {
+    return (
+      <Link to={`/cart`} 
+      className='my-8 p-2 flex justify-center font-bold text-white bg-blueEcommerce hover:bg-blueStrongEcommerce'>
+      Ir al carrito
+    </Link>)
+  }
 
   return (
     <section className="text-gray-700 body-font overflow-hidden bg-white">
@@ -20,7 +50,6 @@ const ItemDetail = ({producto}) => {
           <div className="lg:w-1/2 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0">
             <h2 className="text-sm title-font text-gray-500 tracking-widest">Ref: {producto.id}</h2>
             <h1 className="text-gray-900 text-3xl title-font font-medium mb-1">{producto.nombre}</h1>
-
             <p className="leading-relaxed py-6">
               {producto.descripcion}
             </p>
@@ -28,14 +57,13 @@ const ItemDetail = ({producto}) => {
             </div>
             <div className="flex">
               <span className="title-font font-medium text-2xl text-gray-900">{precio}</span>
-              <button className="flex items-center ml-auto text-white bg-red-500 border-0 py-2 px-6 focus:outline-none hover:bg-red-600 rounded">
-                <FaCartPlus />
-                </button>
-              <button className="rounded-full w-10 h-10 bg-gray-200 p-0 border-0 inline-flex items-center justify-center text-gray-500 ml-4">
-                <FaHeart />
-
-              </button>
             </div>
+            {
+              mostrarItemCount ?  (
+              <ItemCount stock={producto.stock} agregarAlCarrito={agregarAlCarrito} />)
+
+              :( <IrAlCarritoComponent/>) 
+            }
           </div>
         </div>
       </div>
